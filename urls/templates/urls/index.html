@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="well">
+        <form action="{% url 'urls-index' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group{% if errors %} has-error{% endif %}">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Paste url here..." name="url">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Make Shortcut!</button>
+                    </span>
+                </div>
+                {% if errors %}
+                    <span class="help-block">{{ errors }}</span>
+                {% endif %}
+            </div>
+        </form>
+    {% if url_list %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Long Url</th>
+                    <th>Created</th>
+                    <th>Short Url</th>
+                    <th>Clicks</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for url_item in url_list %}
+            <tr class="{% if url_item.pk == current %}success{% endif %}">
+                <td>{{ url_item.url }}</td>
+                <td>{{ url_item.created }}</td>
+                <td><a target="_blank" href="{% url 'urls-shortcut' hash_param=url_item.hash %}">{% url 'urls-shortcut' hash_param=url_item.hash %}</a></td>
+                <td>{{ url_item.views }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No urls are available yet.</p>
+    {% endif %}
+    </div>
+{% endblock content %}
